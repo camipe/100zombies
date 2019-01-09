@@ -1,0 +1,10 @@
+.house {
+  height: 10px;
+  width: 10px;
+  background-color: green;
+  margin: 10px;
+}
+
+.infected {
+  background-color: red;
+}

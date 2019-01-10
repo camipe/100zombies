@@ -4,7 +4,7 @@ import './House.css';
 
 const house = (props) => {
   return (
-    <div className={ props.status ? 'house infected' : 'house'}></div>
+    <div className={ props.status ? 'House Infected' : 'House'}></div>
   )
 };
 

@@ -5,15 +5,17 @@ import './Game.css';
 
 class Game extends Component {
   state = {
+    // keeps track of the score for each game
     games: [],
+    // keeps track of the houses' infection status
     houses: Array(100).fill(false),
     nrOfZombies: 1,
     days: 0,
   }
 
+  // resets the houses and zombies for a new game.
   reset() {
     const houses = Array(100).fill(false);
-
     this.setState({
       houses,
       days: 0,
@@ -21,7 +23,8 @@ class Game extends Component {
     });
   }
 
-  newRound() {
+  // saves the game score and resets the game board.
+  newGame() {
     const games = [...this.state.games];
     games.push(this.state.days);
 
@@ -29,15 +32,23 @@ class Game extends Component {
     this.reset()
   }
 
+  // reset the whole game and start over from the beginning.
+  resetGame() {
+    this.setState({games: []});
+    this.reset();
+  }
+
+  // infects a specific house in the houses array and returns a zombie if the house was not yet infected
   sendZombie(houses, index) {
     if (houses[index] === true) {
-      return null;
+      return 0;
     } else {
       houses[index] = true;
       return 1;
     }
   }
 
+  // sends out all the zombies to infect new houses for the the day
   playDay() {
     const houses = [...this.state.houses];
     let newZombies = 0;
@@ -62,21 +73,37 @@ class Game extends Component {
   }
 
   render() {
-    let gameInfo = <button onClick={() => this.playDay()}>New day!</button>
+    const {nrOfZombies, games, days} = this.state;
 
-    if (this.state.nrOfZombies > 100) {
-      gameInfo = <button onClick={() => this.newRound()}>New round!</button>
+    let message = null;
+    let button = <button onClick={() => this.playDay()}>New Day</button>
+
+    // when all houses are infected show user instructions to start a new round.
+    if (nrOfZombies > 100) {
+      message = <p>All houses are infected, start a new round by clicking the button.</p>
+      button = <button onClick={() => this.newGame()}>New Game</button>
     }
 
-    if (this.state.games.length === 10) {
-      gameInfo = <div>
-        Over 10 rounds it took an average of x days to infect all houses!
-      </div>
+    // when 10 rounds has been played show average score and instructions to start over.
+    if (games.length === 10) {
+      const average = games.reduce((a, b) => a + b) / games.length;
+      message = <p>
+        Over 10 games it took an average of {average.toFixed(2)}  days to infect all houses! Click the button to start a new game.
+      </p>
+      button = <button onClick={() => this.resetGame()}>Start Over</button>
     }
-    
+
     return (
       <div className="Game">
-      {gameInfo}
+        <p>
+          Games played: {games.length} of 10
+          <br />
+          Day: {days}
+          <br />
+          Zombies: {nrOfZombies}
+        </p>
+        {button}
+        {message}
         <div>
           {this.renderHouses()}
         </div>
